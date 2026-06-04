@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventOS.ai - Intelligent Command Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #1f283e; 
+            font-weight: 600; /* Boosting overall base thickness */
+        }
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+        /* Custom Premium Active Sidebar Link (Grass Green Accent) */
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0.15) 0%, rgba(26, 115, 232, 0.02) 100%);
+            color: #4CAF50;
+            border-left: 4px solid #4CAF50;
+            box-shadow: inset 4px 0 15px rgba(76, 175, 80, 0.08);
+        }
+        .hide-view {
+            display: none !important;
+        }
+        /* Sleek Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f283e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #344261;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4CAF50;
+        }
+    </style>
+</head>
+<body class="text-[#E2E8F0] min-h-screen flex selection:bg-[#4CAF50] selection:text-white">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-64 bg-[#202940] border-r border-[#2d3a54] flex flex-col justify-between fixed h-full z-30 shadow-2xl">
+        <div>
+            <!-- Logo Section with Grass Green Soft Glow -->
+            <div class="p-5 border-b border-[#2d3a54] flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-lg bg-[#4CAF50]/10 border border-[#4CAF50]/40 flex items-center justify-center shadow-[0_0_15px_rgba(76,175,80,0.2)]">
+                    <i class="fa-solid fa-circle-nodes text-[#1A73E8] text-sm animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black tracking-widest text-[#F8FAFC] flex items-center">
+                        EVENT<span class="text-[#4CAF50] ml-0.5">OS.AI</span>
+                    </h1>
+                    <p class="text-[9px] text-[#8a99ad] mono-text tracking-widest uppercase">// INTELLIGENCE NODE v2.0</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="p-4 space-y-6">
+                <!-- Group 1: CORE DECK -->
+                <div>
+                    <p class="text-[10px] font-extrabold text-[#8a99ad] uppercase tracking-widest px-3 mb-2.5 mono-text">// CORE MATRIX</p>
+                    <nav class="space-y-1">
+                        <button onclick="switchView('dashboard')" id="nav-dashboard" class="sidebar-link active w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-grip-vertical w-4 text-center text-[#4CAF50]"></i>
+                            <span>Dashboard Matrix</span>
+                        </button>
+                        <button onclick="switchView('event-input')" id="nav-event-input" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-sliders w-4 text-center text-[#1A73E8]"></i>
+                            <span>Configuration Form</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Group 2: ENGINE MODULES -->
+                <div>
+                    <p class="text-[10px] font-extrabold text-[#8a99ad] uppercase tracking-widest px-3 mb-2.5 mono-text">// ENGINE MODULES</p>
+                    <nav class="space-y-1">
+                        <button onclick="switchView('dna-engine')" id="nav-dna-engine" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-dna w-4 text-center text-[#4CAF50]"></i>
+                            <span>DNA Sequence Hub</span>
+                        </button>
+                        <button onclick="switchView('risk-predictor')" id="nav-risk-predictor" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-shield-halved w-4 text-center text-[#1A73E8]"></i>
+                            <span>AI Threat Scanner</span>
+                        </button>
+                        <button onclick="switchView('camera-coverage')" id="nav-camera-coverage" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-video w-4 text-center text-[#1A73E8]"></i>
+                            <span>Optical Field Grid</span>
+                        </button>
+                        <button onclick="switchView('budget-optimizer')" id="nav-budget-optimizer" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-pie-chart w-4 text-center text-[#4CAF50]"></i>
+                            <span>Resource Tokenizer</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Group 3: STRESS SIMULATION -->
+                <div>
+                    <p class="text-[10px] font-extrabold text-[#8a99ad] uppercase tracking-widest px-3 mb-2.5 mono-text">// SIMULATOR</p>
+                    <nav class="space-y-1">
+                        <button onclick="switchView('future-simulation')" id="nav-future-simulation" class="sidebar-link w-full flex items-center space-x-3 px-3 py-2.5 text-xs font-bold rounded-md text-[#a9b7c6] hover:bg-[#27324e] hover:text-[#F8FAFC] transition-all duration-150">
+                            <i class="fa-solid fa-terminal w-4 text-center text-[#4CAF50]"></i>
+                            <span>Stress Simulator</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Online Health Badge -->
+        <div class="p-4 border-t border-[#2d3a54] bg-[#1f283e]">
+            <div class="flex items-center space-x-3 bg-[#202940] p-2.5 rounded-lg border border-[#2d3a54]">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#1A73E8] shadow-[0_0_8px_#1A73E8]"></span>
+                <div>
+                    <p class="text-[10px] font-black tracking-wider text-[#F8FAFC] mono-text">SYS_OPTIMAL</p>
+                    <p class="text-[9px] font-bold text-[#8a99ad] mono-text">Status: Fully Operational</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CANVASES HUB -->
+    <div class="flex-1 pl-64 flex flex-col min-h-screen bg-[#1f283e]">
+        
+        <!-- HEADER MODULE -->
+        <header class="h-16 border-b border-[#2d3a54] bg-[#202940] px-6 flex items-center justify-between sticky top-0 z-20">
+            <!-- Search Array Bar -->
+            <div class="relative w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#1A73E8] text-[11px]"></i>
+                <input type="text" placeholder="Search system configuration parameters..." class="w-full bg-[#1f283e] border border-[#2d3a54] font-semibold rounded-lg pl-9 pr-8 py-2 text-xs text-[#F8FAFC] placeholder-[#8a99ad] focus:outline-none focus:border-[#4CAF50] transition-all">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] mono-text text-[#8a99ad] bg-[#202940] px-1.5 py-0.5 rounded border border-[#2d3a54]">CTRL</span>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 bg-[#1f283e] border border-[#2d3a54] px-3 py-1.5 rounded-lg text-xs mono-text text-[#1A73E8]">
+                    <span class="h-1 w-1 rounded-full bg-[#1A73E8] animate-pulse"></span>
+                    <span id="header-clock">00:00:00 PM</span>
+                </div>
+                <button onclick="resetConfiguration()" class="text-xs font-bold text-[#8a99ad] hover:text-[#EF4444] transition-colors mono-text px-2">_RESET</button>
+                <button onclick="triggerEngineCalculations()" class="bg-[#4CAF50] hover:bg-[#43a047] text-white font-extrabold px-4 py-2 rounded-lg text-xs uppercase tracking-wider transition-all shadow-md shadow-black/20">
+                    Compile Telemetry
+                </button>
+                <div class="h-8 w-8 rounded-lg bg-[#27324e] border border-[#344261] flex items-center justify-center font-black text-xs text-[#4CAF50]">AI</div>
+            </div>
+        </header>
+
+        <!-- MAIN ROUTE FRAME VIEWPORTS -->
+        <main class="flex-1 p-6 relative">
+
+            <!-- VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="space-y-6">
+                <div class="flex items-center justify-between border-b border-[#2d3a54] pb-4">
+                    <div>
+                        <span class="text-[10px] font-black text-[#4CAF50] tracking-widest uppercase mono-text">// LIVE ENVIRONMENT MATRIX</span>
+                        <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Autonomous Operations Desk</h2>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg px-4 py-2 text-right shadow-inner">
+                        <span class="text-[8px] uppercase font-bold mono-text block text-[#8a99ad]">Active System Profile</span>
+                        <span class="text-xs font-black text-[#1A73E8] mono-text" id="dash-active-event-title">[AWAITING_INGESTION]</span>
+                    </div>
+                </div>
+
+                <!-- Custom Card Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded-lg relative hover:border-[#4CAF50] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#8a99ad] uppercase tracking-wider flex items-center justify-between">Health Score <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#1A73E8]/10 text-[#1A73E8] font-mono" id="lbl-health">IDLE</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#F8FAFC] mt-3 mono-text" id="metric-health">--</p>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded-lg relative hover:border-[#4CAF50] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#8a99ad] uppercase tracking-wider flex items-center justify-between">Success Prob <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#4CAF50]/10 text-[#4CAF50] font-mono" id="lbl-success">STABLE</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#F8FAFC] mt-3 mono-text" id="metric-success">--</p>
+                    </div>
+                    <!-- Danger Data Box: Styled strictly with solid Red (#EF4444) -->
+                    <div class="bg-[#202940] border border-[#EF4444]/30 p-4 rounded-lg relative hover:border-[#EF4444] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#EF4444] uppercase tracking-wider flex items-center justify-between">Risk Factor <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#EF4444]/10 text-[#EF4444] font-mono">CRITICAL</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#EF4444] mt-3 mono-text" id="metric-risk">--</p>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded-lg relative hover:border-[#4CAF50] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#8a99ad] uppercase tracking-wider flex items-center justify-between">Venue Index <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#8a99ad]/10 text-[#8a99ad] font-mono">READY</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#F8FAFC] mt-3 mono-text" id="metric-utilization">--</p>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded-lg relative hover:border-[#4CAF50] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#8a99ad] uppercase tracking-wider flex items-center justify-between">Density Ratio <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#1A73E8]/10 text-[#1A73E8] font-mono">CALC</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#F8FAFC] mt-3 text-xs mono-text" id="metric-density">--</p>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded-lg relative hover:border-[#4CAF50] transition-all shadow-lg">
+                        <p class="text-[9px] font-extrabold text-[#8a99ad] uppercase tracking-wider flex items-center justify-between">Egress State <span class="text-[8px] px-1.5 py-0.5 rounded bg-[#1A73E8]/10 text-[#1A73E8] font-mono">SECURE</span></p>
+                        <p class="text-2xl font-black tracking-tight text-[#F8FAFC] mt-3 mono-text" id="metric-readiness">--</p>
+                    </div>
+                </div>
+
+                <!-- Mid-row Analytics Modules -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-5 h-64 flex flex-col justify-between shadow-xl">
+                        <div class="flex justify-between items-center border-b border-[#2d3a54] pb-2"><h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// Analytics Allocation Chart</h4><span class="text-[9px] mono-text text-[#8a99ad]">Matrix Stream</span></div>
+                        <div class="h-44 w-full flex items-center justify-center text-[#8a99ad] mono-text text-xs italic" id="empty-chart-1">[Awaiting parameter ingestion...]</div>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-5 h-64 flex flex-col justify-between shadow-xl">
+                        <div class="flex justify-between items-center border-b border-[#2d3a54] pb-2"><h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// Flow Variance Evaluation</h4><span class="text-[9px] mono-text text-[#8a99ad]">Pipeline: Idle</span></div>
+                        <div class="h-44 w-full flex items-center justify-center text-[#8a99ad] mono-text text-xs italic" id="empty-chart-2">[Awaiting core compilation...]</div>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-5 h-64 flex flex-col justify-between shadow-xl">
+                        <div class="flex justify-between items-center border-b border-[#2d3a54] pb-2"><h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// System Internal Feed Logs</h4><span class="text-[9px] bg-[#1f283e] px-2 py-0.5 rounded mono-text text-[#4CAF50] border border-[#2d3a54]" id="dash-log-counter">0 events</span></div>
+                        <div class="flex-1 overflow-y-auto space-y-2 mt-3 pr-1 text-[11px]" id="dash-incident-feed">
+                            <p class="text-[#8a99ad] italic text-center pt-10 font-bold">// [No anomalies flagged inside pipeline]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Auxiliary Feed Boxes -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-5 min-h-[160px] shadow-xl">
+                        <div class="flex justify-between items-center mb-3 border-b border-[#2d3a54] pb-2"><h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// Peripheral Intercept Traces</h4><span class="text-[9px] mono-text text-[#8a99ad]">Realtime Node Sensors</span></div>
+                        <div class="text-xs text-[#8a99ad] italic py-6 text-center mono-text" id="dash-field-stream">[No telemetry models compiled]</div>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-5 min-h-[160px] shadow-xl">
+                        <div class="flex justify-between items-center mb-3 border-b border-[#2d3a54] pb-2"><h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// AI Diagnostic Synthesis</h4><span class="text-[9px] mono-text text-[#4CAF50] font-black">STABLE PATTERN DECK</span></div>
+                        <div class="text-xs text-[#a9b7c6] bg-[#1f283e] p-4 border border-[#2d3a54] rounded-lg flex items-center space-x-3" id="dash-ai-recom-box">
+                            <span class="h-1.5 w-1.5 rounded-full bg-[#1A73E8] animate-ping"></span>
+                            <p class="font-mono text-[#8a99ad] font-bold">Ingest core data bounds inside the configuration deck to activate live behavioral tracking insights.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: EVENT INPUT FORM -->
+            <section id="view-event-input" class="space-y-6 hide-view">
+                <div class="flex items-center justify-between border-b border-[#2d3a54] pb-4">
+                    <div>
+                        <span class="text-[10px] font-black text-[#1A73E8] tracking-widest uppercase mono-text">// CONFIGURATION REGISTRATION</span>
+                        <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Parameters Matrix Input Gateway</h2>
+                    </div>
+                    <div class="text-right"><span class="text-[9px] mono-text text-[#8a99ad] uppercase block">SECURE LAYER</span><span class="text-xs font-black text-[#4CAF50] mono-text">STAGE_01</span></div>
+                </div>
+
+                <!-- Form Elements -->
+                <div class="bg-[#202940] border border-[#2d3a54] rounded-lg p-6 shadow-2xl">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Event Identifier Name</label>
+                            <input type="text" id="inp-name" value="Quantum Tech Summit 2026" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Structural Class Typology</label>
+                            <select id="inp-type" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                                <option value="Tech Conference">Tech Conference</option>
+                                <option value="Music Festival">Music Festival</option>
+                                <option value="Sports Tournament">Sports Tournament</option>
+                                <option value="Corporate Expo">Corporate Expo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Target Launch Schedule</label>
+                            <input type="date" id="inp-date" value="2026-06-22" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Duration Lifecycle (Hours)</label>
+                            <input type="number" id="inp-duration" value="9" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Personnel Density Capacity (Pax)</label>
+                            <input type="number" id="inp-participants" value="2400" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">High-Priority Escorts (VIPs)</label>
+                            <input type="number" id="inp-vip" value="40" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Funding Liquidity Budget (USD)</label>
+                            <input type="number" id="inp-budget" value="120000" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Spatial Area Boundary (Sq.m)</label>
+                            <input type="number" id="inp-area" value="2800" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Absolute Containment Limit</label>
+                            <input type="number" id="inp-capacity" value="2500" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Primary Entry Gates</label>
+                            <input type="number" id="inp-entry" value="4" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Primary Exit Gates</label>
+                            <input type="number" id="inp-exit" value="4" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Emergency Safety Egress Paths</label>
+                            <input type="number" id="inp-emergency" value="5" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Logistical Parking Hub Cap</label>
+                            <input type="number" id="inp-parking" value="600" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Active Surveillance Cameras</label>
+                            <input type="number" id="inp-cameras" value="14" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Tactical Volunteer Marshals</label>
+                            <input type="number" id="inp-volunteers" value="42" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Enforcement Security Staff</label>
+                            <input type="number" id="inp-security" value="22" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Sustenance Nodes Allocation</label>
+                            <input type="number" id="inp-food" value="1800" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Bandwidth Pipeline Feed</label>
+                            <select id="inp-internet" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                                <option value="High-Speed Fiber">High-Speed Fiber</option>
+                                <option value="Satellite Backup">Satellite Backup</option>
+                                <option value="Standard Multi-line">Standard Multi-line</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Visual Projector Configurations</label>
+                            <input type="number" id="inp-projectors" value="6" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Audio Array Node Inputs</label>
+                            <input type="number" id="inp-speakers" value="10" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Transmitter Radio Feeds</label>
+                            <input type="number" id="inp-mics" value="8" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Sponsor Pavilion Blocks</label>
+                            <input type="number" id="inp-sponsors" value="7" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-[#8a99ad] uppercase tracking-wider mb-2 mono-text">Environmental Profile</label>
+                            <select id="inp-environment" class="w-full bg-[#1f283e] border border-[#2d3a54] rounded p-3 text-xs text-[#F8FAFC] font-bold focus:outline-none focus:border-[#4CAF50] mono-text transition-all">
+                                <option value="Indoor">Indoor</option>
+                                <option value="Outdoor">Outdoor</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="mt-8 pt-5 border-t border-[#2d3a54] flex justify-end space-x-3">
+                        <button onclick="loadSampleData()" class="px-5 py-2.5 border border-[#2d3a54] bg-[#1f283e] text-[#a9b7c6] font-extrabold rounded text-xs uppercase tracking-wider hover:bg-[#27324e] transition-all">Load Target Dataset</button>
+                        <button onclick="triggerEngineCalculations()" class="px-5 py-2.5 bg-[#4CAF50] hover:bg-[#43a047] text-white font-extrabold rounded text-xs tracking-wider uppercase transition-all flex items-center space-x-2 shadow-md">
+                            <span>Execute Logic Processor</span>
+                            <i class="fa-solid fa-code text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: EVENT DNA ENGINE -->
+            <section id="view-dna-engine" class="space-y-6 hide-view">
+                <div>
+                    <span class="text-[10px] font-black text-[#4CAF50] tracking-widest uppercase mono-text">// GENOMICS DECK</span>
+                    <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Structural Signature Architecture</h2>
+                </div>
+                <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded text-xs text-[#8a99ad] font-bold mono-text" id="dna-status-banner">
+                    [Awaiting telemetry sequence matrix upload parameters...]
+                </div>
+                <div class="bg-[#202940] border border-[#2d3a54] rounded p-6 min-h-[300px] flex flex-col justify-between shadow-xl">
+                    <div class="flex justify-between items-center border-b border-[#2d3a54] pb-3">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">Event Vector Fingerprint Mapping</h4>
+                        <span class="text-[10px] text-[#1A73E8] font-mono tracking-wider">STATE::IDLE</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center" id="dna-display-container">
+                        <div class="h-12 w-12 rounded bg-[#1f283e] flex items-center justify-center border border-[#2d3a54] mb-4">
+                            <i class="fa-solid fa-fingerprint text-xl text-[#4CAF50]"></i>
+                        </div>
+                        <p class="text-xs text-[#8a99ad] font-bold max-w-sm font-mono">Compile active metrics in the configuration console to generate the explicit profile token blueprint sequence.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: AI RISK PREDICTOR -->
+            <section id="view-risk-predictor" class="space-y-6 hide-view">
+                <div>
+                    <span class="text-[10px] font-black text-[#4CAF50] tracking-widest uppercase mono-text">// HEURISTIC CAPABILITY TRACKING</span>
+                    <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Cognitive Vulnerability Evaluation</h2>
+                </div>
+                <div class="bg-[#202940] border border-[#2d3a54] p-4 rounded text-xs text-[#8a99ad] font-bold mono-text" id="risk-status-banner">
+                    [Diagnostic scanning arrays detached. Stream parameter blocks inside form deck.]
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="risk-analysis-cards">
+                    <!-- Injected dynamically via JS with red alerts -->
+                </div>
+            </section>
+
+            <!-- VIEW: CAMERA COVERAGE -->
+            <section id="view-camera-coverage" class="space-y-6 hide-view">
+                <div>
+                    <span class="text-[10px] font-black text-[#1A73E8] tracking-widest uppercase mono-text">// MONITORING FLOW DECK</span>
+                    <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Optical Footprint Space Intersection</h2>
+                </div>
+                <div class="bg-[#202940] border border-[#2d3a54] rounded p-6 shadow-2xl">
+                    <div class="flex justify-between items-center border-b border-[#2d3a54] pb-3 mb-4">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">Spatial Feed Tracing Matrix Grid</h4>
+                        <span class="text-[9px] text-[#8a99ad] mono-text">Geometry Vector Canvas</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <div class="lg:col-span-3 bg-[#1f283e] border border-[#2d3a54] rounded h-80 relative overflow-hidden flex items-center justify-center" id="camera-canvas-wrapper">
+                            <div class="absolute inset-0 opacity-5 bg-[linear-gradient(to_right,#555 1px,transparent 1px),linear-gradient(to_bottom,#555 1px,transparent_1px)] bg-[size:25px_25px]"></div>
+                            <div class="z-10 text-center text-xs text-[#8a99ad] mono-text italic font-bold" id="camera-map-placeholder">
+                                [Surveillance framework uninitialized. Build operational data layout matrices.]
+                            </div>
+                            <canvas id="cameraCoverageCanvas" class="absolute inset-0 w-full h-full pointer-events-none hide-view"></canvas>
+                        </div>
+                        
+                        <div class="space-y-5">
+                            <h5 class="text-xs font-black text-[#F8FAFC] uppercase tracking-wider mono-text">// PATTERN CODES</h5>
+                            <div class="space-y-3 text-xs font-mono font-bold text-[11px]">
+                                <div class="flex items-center space-x-3"><span class="h-2.5 w-2.5 bg-[#4CAF50] rounded"></span><span class="text-[#a9b7c6]">Maximum Convergence</span></div>
+                                <div class="flex items-center space-x-3"><span class="h-2.5 w-2.5 bg-[#1A73E8] rounded"></span><span class="text-[#a9b7c6]">Secondary Safe Angles</span></div>
+                                <div class="flex items-center space-x-3"><span class="h-2.5 w-2.5 bg-[#344261] rounded"></span><span class="text-[#a9b7c6]">Blind Boundary Space</span></div>
+                            </div>
+                            <div class="pt-4 border-t border-[#2d3a54] text-[11px] text-[#8a99ad] font-mono leading-relaxed" id="camera-summary-text">
+                                Surveillance system currently resting in diagnostic bypass mode.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: BUDGET OPTIMIZER -->
+            <section id="view-budget-optimizer" class="space-y-6 hide-view">
+                <div>
+                    <span class="text-[10px] font-black text-[#1A73E8] tracking-widest uppercase mono-text">// LOGISTICAL TOKENS</span>
+                    <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Asset Re-distribution Balance</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded p-6 shadow-2xl">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mb-4 mono-text">// Asset Dispersal Ledger</h4>
+                        <div class="space-y-3 font-mono text-xs font-bold" id="budget-allocation-rows">
+                            <p class="text-[#8a99ad] italic">[No functional asset distributions mapped]</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] rounded p-6 shadow-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center border-b border-[#2d3a54] pb-3">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// Geometric Distribution Metric</h4>
+                            <span class="text-[9px] mono-text text-[#8a99ad]">Ratio Optimization Graph</span>
+                        </div>
+                        <div class="flex-1 h-56 relative flex items-center justify-center mt-4">
+                            <canvas id="budgetDonutChart" class="max-h-full"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-[#202940] border border-[#2d3a54] p-5 shadow-xl rounded-lg">
+                        <span class="text-[9px] uppercase font-black mono-text text-[#8a99ad] block">Contingency Capital Hold Escrow (12%)</span>
+                        <div class="text-xl font-black text-[#F8FAFC] tracking-tight mt-1 mono-text" id="budget-emergency-reserve">--</div>
+                    </div>
+                    <div class="bg-[#202940] border border-[#2d3a54] p-5 shadow-xl rounded-lg">
+                        <span class="text-[9px] uppercase font-black mono-text text-[#8a99ad] block">Target Sponsorship Revenue Baseline</span>
+                        <div class="text-xl font-black text-[#4CAF50] tracking-tight mt-1 mono-text" id="budget-sponsor-target">--</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: FUTURE SIMULATION -->
+            <section id="view-future-simulation" class="space-y-6 hide-view">
+                <div class="flex items-center justify-between border-b border-[#2d3a54] pb-4">
+                    <div>
+                        <span class="text-[10px] font-black text-[#1A73E8] tracking-widest uppercase mono-text">// PROBABILISTIC EQUATIONS</span>
+                        <h2 class="text-xl font-black text-[#F8FAFC] tracking-wide mt-0.5">Variance Stress Simulation</h2>
+                    </div>
+                    <button onclick="runWhatIfSimulation()" id="btn-simulation-trigger" disabled class="bg-[#4CAF50] disabled:bg-[#27324e] disabled:opacity-20 disabled:pointer-events-none text-white font-extrabold px-4 py-2 rounded text-xs uppercase tracking-wider transition-all flex items-center space-x-2 shadow-lg">
+                        <i class="fa-solid fa-play text-[9px]"></i>
+                        <span>Execute Stress Simulations</span>
+                    </button>
+                </div>
+
+                <!-- Simulation Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="simulation-scenarios-container">
+                    <!-- Cards injected smoothly via JS engine -->
+                </div>
+
+                <!-- Graph Delta Comparison -->
+                <div class="bg-[#202940] border border-[#2d3a54] rounded p-6 shadow-2xl">
+                    <div class="flex justify-between items-center border-b border-[#2d3a54] pb-3 mb-4">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#F8FAFC] mono-text">// Predictive Success Convergence Array</h4>
+                        <span class="text-[9px] text-[#8a99ad] mono-text">Delta Target Matrix Tracking</span>
+                    </div>
+                    <div class="h-64 w-full">
+                        <canvas id="simulationBarChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Core Logic Integration Layer -->
+    <script src="app.js"></script>
+</body>
+</html>
